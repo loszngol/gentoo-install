@@ -35,19 +35,16 @@ if [ "$is_swap" = "y" -o "$is_swap" = "Y" ]; then
     echo "Which partition do you want to format as swap?"
     read swap_part
 
-    echo "Creating swap partition"
     mkswap $swap_part
-    echo "Mounting swap partition"
     swapon $swap_part
+
+    echo "export swap_part=$swap_part" >> /mnt/gentoo/install_vars
 fi
 
-echo "Making boot partition"
 mkfs.vfat -F 32 $fat_part
-echo "Formating root partition as ext4"
 mkfs.ext4 $root_part
 
 mkdir --parents -v /mnt/gentoo
-echo "Mounting filesystem on /mnt/gentoo"
 mount $root_part /mnt/gentoo
 
 cd /mnt/gentoo
@@ -68,5 +65,11 @@ mount --make-slave /mnt/gentoo/run
 
 wget "https://raw.githubusercontent.com/loszngol/gentoo-install/main/install_stage2.sh"
 chmod +x /mnt/gentoo/install_stage2.sh
+
+touch /mnt/gentoo/install_vars
+
+echo "export disk=$disk" >> /mnt/gentoo/install_vars
+echo "export fat_part=$fat_part" >> /mnt/gentoo/install_vars
+echo "export root_part=$root_part" >> /mnt/gentoo/install_vars
 
 chroot /mnt/gentoo /bin/bash install_stage2.sh
