@@ -28,12 +28,14 @@ read fat_part
 echo "Which partition do you want to format as ext4?"
 read root_part
 
-read -p "Do you want to use swap? (yes/no)" answer
+read -p "Do you want to use swap? (y/n) " answer
 
 if [ "$answer" = "y" -o "$answer" = "Y" ]; then
     echo "Which partition do you want to format as swap?"
     read swap_part
+    mkswap $swap_part
     swapon $swap_part
+fi
 
 mkfs.vfat -F 32 $fat_part
 mkfs.ext4 $root_part
