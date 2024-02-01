@@ -1,4 +1,5 @@
 source /etc/profile
+source /install_vars
 export PS1="(chroot) ${PS1}"
 
 read -p "Does your system run UEFI (y/n) " is_uefi
