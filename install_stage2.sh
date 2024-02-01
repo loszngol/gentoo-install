@@ -38,7 +38,6 @@ echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 emerge --verbose --update --deep --newuse @world
 emerge --depclean
 
-read "Set a timezone eg. Europe/Brussels" timezone
 echo $timezone > /etc/timezone
 emerge --config sys-libs/timezone-data
 
@@ -46,7 +45,7 @@ nano /etc/locale.gen
 locale-gen
 
 eselect locale list
-read "Which locale to use?" locale
+read -p "Which locale to use? " locale
 eselect locale set $locale
 
 env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
@@ -87,7 +86,7 @@ cd /etc/init.d
 ln -s net.lo net.$interface
 rc-update add net.$interface default
 
-echo 127.0.0.1 localhost gentoo
+echo 127.0.0.1 localhost gentoo >> /etc/hosts
 
 clear
 echo "Set password for root"

@@ -18,6 +18,8 @@ fi
 clear
 lsblk
 
+echo "Enter a timezone eg. Europe/Brussels"
+
 echo "Which disk do you want to partition"
 read disk
 
