@@ -38,7 +38,7 @@ echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 emerge --verbose --update --deep --newuse @world
 emerge --depclean
 
-echo $timezone > /etc/timezone
+echo $timezone_cfg > /etc/timezone
 emerge --config sys-libs/timezone-data
 
 nano /etc/locale.gen
