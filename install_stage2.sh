@@ -24,7 +24,7 @@ cp /usr/share/portage/config/repos.conf /etc/portage/repos.conf/gentoo.conf
 emerge --sync
 
 eselect profile list
-read -p "Which profile to use?" profile
+read -p "Which profile to use? " profile
 eselect profile set $profile
 
 read -p "Do you want to make any changes to make.conf? (y/n) " answer
@@ -38,7 +38,7 @@ echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 emerge --verbose --update --deep --newuse @world
 emerge --depclean
 
-read -p "Set a timezone eg. Europe/Brussels " timezone
+read "Set a timezone eg. Europe/Brussels" timezone
 echo $timezone > /etc/timezone
 emerge --config sys-libs/timezone-data
 
@@ -46,12 +46,12 @@ nano /etc/locale.gen
 locale-gen
 
 eselect locale list
-read -p "Which locale to use?" locale
+read "Which locale to use?" locale
 eselect locale set $locale
 
 env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
-emerge --ask sys-kernel/linux-firmware
+emerge sys-kernel/linux-firmware
 read -p "Do you want to install intel micocode? (y/n) " intel_microcode
 
 if [ "$intel_microcode" = "y" -o "$intel_microcode" = "Y" ]; then
@@ -60,7 +60,7 @@ fi
 
 echo "sys-kernel/installkernel dracut grub" > /etc/portage/package.use/installkernel
 
-read -p "Do you want to use a binary kernel?" answer
+read -p "Do you want to use a binary kernel? (y/n) " answer
 if [ "$answer" = "y" -o "$answer" = "Y" ]; then
     emerge sys-kernel/gentoo-kernel-bin
 else
@@ -68,3 +68,54 @@ else
 fi
 
 emerge --depclean
+
+emerge sys-fs/genfstab
+genfstab -U >> /etc/fstab
+echo gentoo > /etc/hostname
+
+emerge net-misc/dhcpcd
+
+emerge --noreplace net-misc/netifrc
+clear
+ip a
+
+echo "Which network interface do you want to use?"
+read interface
+
+echo "config_$interface=\"dhcp\""
+cd /etc/init.d
+ln -s net.lo net.$interface
+rc-update add net.$interface default
+
+echo 127.0.0.1 localhost gentoo
+
+clear
+echo "Set password for root"
+passwd
+
+nano /etc/rc.conf
+nano /etc/conf.d/keymaps
+nano /etc/conf.d/hwclock
+
+emerge app-admin/sysklogd sys-process/cronie sys-apps/mlocate app-shells/bash-completion net-misc/chrony dosfstools sys-block/io-scheduler-udev-rules
+rc-update add sysklogd default
+rc-update add cronie default
+rc-update add chronyd default
+
+if [ "$is_uefi" = "y" -o "$is_uefi" = "Y" ]; then
+    echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+fi
+
+emerge sys-boot/grub
+
+if [ "$is_uefi" = "y" -o "$is_uefi" = "Y" ]; then
+    grub-install --efi-directory=/efi
+else
+    grub-install $fat_part
+fi
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+exit
+umount -l /mnt/gentoo/dev{/shm,/pts,}
+umount -R /mnt/gentoo
