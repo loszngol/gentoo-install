@@ -57,7 +57,7 @@ if [ "$intel_microcode" = "y" -o "$intel_microcode" = "Y" ]; then
     emerge sys-firmware/intel-microcode
 fi
 
-echo "sys-kernel/installkernel dracut" > /etc/portage/package.use/installkernel
+echo "sys-kernel/installkernel dracut grub" > /etc/portage/package.use/installkernel
 
 read -p "Do you want to use a binary kernel?" answer
 if [ "$answer" = "y" -o "$answer" = "Y" ]; then

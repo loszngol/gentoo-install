@@ -67,7 +67,6 @@ mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run
 
 wget "https://raw.githubusercontent.com/loszngol/gentoo-install/main/install_stage2.sh"
-mv install_stage2.sh /mnt/gentoo
 chmod +x /mnt/gentoo/install_stage2.sh
 
 chroot /mnt/gentoo /bin/bash install_stage2.sh
