@@ -19,6 +19,7 @@ clear
 lsblk
 
 echo "Enter a timezone eg. Europe/Brussels"
+read timezone_cfg
 
 echo "Which disk do you want to partition"
 read disk
@@ -73,5 +74,6 @@ touch /mnt/gentoo/install_vars
 echo "export disk=$disk" >> /mnt/gentoo/install_vars
 echo "export fat_part=$fat_part" >> /mnt/gentoo/install_vars
 echo "export root_part=$root_part" >> /mnt/gentoo/install_vars
+echo "export timezone_cfg=$timezone_cfg" >> /mnt/gentoo/install_vars
 
 chroot /mnt/gentoo /bin/bash install_stage2.sh
