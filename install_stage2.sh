@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source /etc/profile
 source /install_vars
 export PS1="(chroot) ${PS1}"
@@ -5,9 +7,9 @@ export PS1="(chroot) ${PS1}"
 read -p "Does your system run UEFI (y/n) " is_uefi
 if [ "$is_uefi" = "y" -o "$is_uefi" = "Y" ]; then
     mkdir -v /efi
-    mount $fat_part /efi
+    mount $boot_part /efi
 else
-    mount $fat_part /boot
+    mount $boot_part /boot
 fi
 
 emerge-webrsync
@@ -69,7 +71,7 @@ fi
 emerge --depclean
 
 emerge sys-fs/genfstab
-genfstab -U >> /etc/fstab
+genfstab -U /mnt >> /etc/fstab
 echo gentoo > /etc/hostname
 
 emerge net-misc/dhcpcd
@@ -86,7 +88,7 @@ cd /etc/init.d
 ln -s net.lo net.$interface
 rc-update add net.$interface default
 
-echo 127.0.0.1 localhost gentoo >> /etc/hosts
+echo 127.0.0.1 gentoo >> /etc/hosts
 
 clear
 echo "Set password for root"
@@ -110,11 +112,12 @@ emerge sys-boot/grub
 if [ "$is_uefi" = "y" -o "$is_uefi" = "Y" ]; then
     grub-install --efi-directory=/efi
 else
-    grub-install $fat_part
+    grub-install $boot_part
 fi
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
 exit
+cd
 umount -l /mnt/gentoo/dev{/shm,/pts,}
 umount -R /mnt/gentoo

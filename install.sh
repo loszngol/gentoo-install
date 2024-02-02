@@ -16,10 +16,12 @@ else
 fi
 
 clear
-lsblk
 
 echo "Enter a timezone eg. Europe/Brussels"
 read timezone_cfg
+
+clear
+lsblk
 
 echo "Which disk do you want to partition"
 read disk
@@ -27,7 +29,7 @@ read disk
 cfdisk $disk
 
 echo "Which partition wo you want to farmat as fat?"
-read fat_part
+read boot_part
 
 echo "Which partition do you want to format as ext4?"
 read root_part
@@ -44,7 +46,7 @@ if [ "$is_swap" = "y" -o "$is_swap" = "Y" ]; then
     echo "export swap_part=$swap_part" >> /mnt/gentoo/install_vars
 fi
 
-mkfs.vfat -F 32 $fat_part
+mkfs.vfat -F 32 $boot_part
 mkfs.ext4 $root_part
 
 mkdir --parents -v /mnt/gentoo
@@ -72,7 +74,7 @@ chmod +x /mnt/gentoo/install_stage2.sh
 touch /mnt/gentoo/install_vars
 
 echo "export disk=$disk" >> /mnt/gentoo/install_vars
-echo "export fat_part=$fat_part" >> /mnt/gentoo/install_vars
+echo "export boot_part=$boot_part" >> /mnt/gentoo/install_vars
 echo "export root_part=$root_part" >> /mnt/gentoo/install_vars
 echo "export timezone_cfg=$timezone_cfg" >> /mnt/gentoo/install_vars
 
