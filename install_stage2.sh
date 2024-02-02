@@ -117,6 +117,9 @@ fi
 
 grub-mkconfig -o /boot/grub/grub.cfg
 
+wget "https://raw.githubusercontent.com/loszngol/gentoo-install/main/post_install.sh"
+chmod +x post_install.sh
+
 exit
 cd
 umount -l /mnt/gentoo/dev{/shm,/pts,}
